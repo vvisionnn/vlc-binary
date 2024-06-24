@@ -56,9 +56,9 @@ jobs:
           mkdir /tmp/vlc/VLCKit.xcframework
 
           # Copy binaries for supported architectures from the downloaded xcframework
+          cp -r "$vlckit_xcframework_folder/*" /tmp/vlc/VLCKit.xcframework || exit 1
           cp -r $mobile_vlc_xcframework_folder/* /tmp/vlc/MobileVLCKit.xcframework || exit 1
           cp -r $tv_vlc_xcframework_folder/* /tmp/vlc/TVVLCKit.xcframework || exit 1
-          cp -r $vlckit_xcframework_folder/* /tmp/vlc/VLCKit.xcframework || exit 1
 
           # Create our final zip files for the xcframeworks
           cd /tmp/vlc
