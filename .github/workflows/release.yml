@@ -48,7 +48,7 @@ jobs:
 
           mobile_vlc_xcframework_folder=/tmp/vlc/MobileVLCKit-binary/MobileVLCKit.xcframework
           tv_vlc_xcframework_folder=/tmp/vlc/TVVLCKit-binary/TVVLCKit.xcframework
-          vlckit_xcframework_folder=/tmp/vlc/VLCKit-binary/VLCKit.xcframework
+          vlckit_xcframework_folder="/tmp/vlc/VLCKit - binary/VLCKit.xcframework" # different folder name for VLCKit
 
           # Create new folders for our xcframeworks
           mkdir /tmp/vlc/MobileVLCKit.xcframework
