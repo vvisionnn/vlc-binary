@@ -34,18 +34,18 @@ let package = Package(
     ),
     .binaryTarget(
       name: "MobileVLCKit",
-      url: "https://github.com/vvisionnn/vlc-binary/releases/download/3.5.1/MobileVLCKit.xcframework.zip",
-      checksum: "b3d864ca6b85ce52655aa0b2fc43665c8f3f4f1fd304bc1ed4cc7ea75719d9f3" // MobileVLCKit
+      url: "https://github.com/vvisionnn/vlc-binary/releases/download/3.6.0/MobileVLCKit.xcframework.zip",
+      checksum: "bc08cf3741eb4dc9979b46452681e59448f33e28b525e48f066999bb81630823" // MobileVLCKit
     ),
     .binaryTarget(
       name: "TVVLCKit",
-      url: "https://github.com/vvisionnn/vlc-binary/releases/download/3.5.1/TVVLCKit.xcframework.zip",
-      checksum: "de4d6918a0b85ba22a4154ae4ed28e0d1be6b84ec3f7593b6914dfe081e86add" // TVVLCKit
+      url: "https://github.com/vvisionnn/vlc-binary/releases/download/3.6.0/TVVLCKit.xcframework.zip",
+      checksum: "5091f25c252f1c679f63e7b3791bff1e1cd4dfa79f3d812ec52bba44bced2583" // TVVLCKit
     ),
     .binaryTarget(
       name: "VLCKit",
-      url: "https://github.com/vvisionnn/vlc-binary/releases/download/3.5.1/VLCKit.xcframework.zip",
-      checksum: "dcbf06e611e88487afe2d08c0c36cddb5f0b36196bf4ebb2a3a34abf3e8f6b9a" // VLCKit
+      url: "https://github.com/vvisionnn/vlc-binary/releases/download/3.6.0/VLCKit.xcframework.zip",
+      checksum: "df67a4f295edba17890fddeeae5eab93e335b056b9aaaba4d08f61eb7a0a09cd" // VLCKit
     ),
   ]
 )
