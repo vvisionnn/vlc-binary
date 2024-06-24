@@ -1,0 +1,102 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release ex.: "3.6.0" (leave blank for latest)'
+        required: true
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - name: Check for updates
+        run: |
+          # Get the latest version of the binary from GitHub API
+          version=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r '.tag_name')
+          # Exit if no updates are available
+          if [[ "${{ github.event.inputs.version }}" == $version ]]; then
+            echo "Latest version of VLCKit is already released!"
+            exit 1
+          fi
+      - name: Download, extract and prepare xcframeworks
+        run: |
+          mobile_vlc_version_file_url=https://code.videolan.org/videolan/VLCKit/-/raw/master/Packaging/MobileVLCKit.json
+          tv_vlc_version_file_url=https://code.videolan.org/videolan/VLCKit/-/raw/master/Packaging/TVVLCKit.json
+          vlckit_version_file_url=https://code.videolan.org/videolan/VLCKit/-/raw/master/Packaging/VLCKit.json
+          mobile_vlc_binary_url=$(curl -s $mobile_vlc_version_file_url | jq -r '${{ github.event.inputs.version }}')
+          tv_vlc_binary_url=$(curl -s $tv_vlc_version_file_url | jq -r '${{ github.event.inputs.version }}')
+          vlckit_binary_url=$(curl -s $vlckit_version_file_url | jq -r '${{ github.event.inputs.version }}')
+
+          if [[ -z $mobile_vlc_binary_url || -z $tv_vlc_binary_url || -z $vlckit_binary_url ]]; then
+            echo "Binary not found for version ${{ github.event.inputs.version }}"
+            echo "MobileVLC: $mobile_vlc_binary_url"
+            echo "TVVLC: $tv_vlc_binary_url"
+            echo "VLCKit: $vlckit_binary_url"
+            exit 1
+          fi
+
+          # Download an unzip each binary zipped file (.tar.xz)
+          mkdir -p /tmp/vlc
+          curl -L $mobile_vlc_binary_url -o /tmp/vlc/MobileVLCKit.tar.xz
+          curl -L $tv_vlc_binary_url -o /tmp/vlc/TVVLCKit.tar.xz
+          curl -L $vlckit_binary_url -o /tmp/vlc/VLCKit.tar.xz
+          tar -xf /tmp/vlc/MobileVLCKit.tar.xz -C /tmp/vlc
+          tar -xf /tmp/vlc/TVVLCKit.tar.xz -C /tmp/vlc
+          tar -xf /tmp/vlc/VLCKit.tar.xz -C /tmp/vlc
+
+          mobile_vlc_xcframework_folder=/tmp/vlc/MobileVLCKit-binary/MobileVLCKit.xcframework
+          tv_vlc_xcframework_folder=/tmp/vlc/TVVLCKit-binary/TVVLCKit.xcframework
+          vlckit_xcframework_folder=/tmp/vlc/VLCKit-binary/VLCKit.xcframework
+
+          # Create new folders for our xcframeworks
+          mkdir /tmp/vlc/MobileVLCKit.xcframework
+          mkdir /tmp/vlc/TVVLCKit.xcframework
+          mkdir /tmp/vlc/VLCKit.xcframework
+
+          # Copy binaries for supported architectures from the downloaded xcframework
+          cp -r $mobile_vlc_xcframework_folder/* /tmp/vlc/MobileVLCKit.xcframework || exit 1
+          cp -r $tv_vlc_xcframework_folder/* /tmp/vlc/TVVLCKit.xcframework || exit 1
+          cp -r $vlckit_xcframework_folder/* /tmp/vlc/VLCKit.xcframework || exit 1
+
+          # Create our final zip files for the xcframeworks
+          cd /tmp/vlc
+          zip --symlinks -r MobileVLCKit.xcframework.zip MobileVLCKit.xcframework
+          zip --symlinks -r TVVLCKit.xcframework.zip TVVLCKit.xcframework
+          zip --symlinks -r VLCKit.xcframework.zip VLCKit.xcframework
+          echo "MOBILE_VLC_PATH=/tmp/vlc/MobileVLCKit.xcframework.zip" >> $GITHUB_ENV
+          echo "TV_VLC_PATH=/tmp/vlc/TVVLCKit.xcframework.zip" >> $GITHUB_ENV
+          echo "VLCKIT_PATH=/tmp/vlc/VLCKit.xcframework.zip" >> $GITHUB_ENV
+      - name: Check out repo
+        uses: actions/checkout@v2
+      - name: Update Package.swift
+        run: |
+          # Update download URL to contain new version
+          sed -i '' "s|/download/v[0-9]*.[0-9]*.[0-9]*/MobileVLCKit.xcframework.zip|/download/${{ github.event.inputs.version }}/MobileVLCKit.xcframework.zip|" ./Package.swift
+          sed -i '' "s|/download/v[0-9]*.[0-9]*.[0-9]*/TVVLCKit.xcframework.zip|/download/${{ github.event.inputs.version }}/TVVLCKit.xcframework.zip|" ./Package.swift
+          sed -i '' "s|/download/v[0-9]*.[0-9]*.[0-9]*/VLCKit.xcframework.zip|/download/${{ github.event.inputs.version }}/VLCKit.xcframework.zip|" ./Package.swift
+
+          # Update checksums
+          mobile_vlc_checksum=$(swift package compute-checksum ${{ env.MOBILE_VLC_PATH }})
+          tv_vlc_checksum=$(swift package compute-checksum ${{ env.TV_VLC_PATH }})
+          vlckit_checksum=$(swift package compute-checksum ${{ env.VLCKIT_PATH }})
+          sed -i '' "s|checksum: \"[^\"]*\" // MobileVLCKit|checksum: \"$mobile_vlc_checksum\" // MobileVLCKit|" ./Package.swift
+          sed -i '' "s|checksum: \"[^\"]*\" // TVVLCKit|checksum: \"$tv_vlc_checksum\" // TVVLCKit|" ./Package.swift
+          sed -i '' "s|checksum: \"[^\"]*\" // VLCKit|checksum: \"$vlckit_checksum\" // VLCKit|" ./Package.swift
+          cat ./Package.swift
+      # - name: Release new binaries
+      #   run: |
+      #     # Commit updated Package.swift
+      #     git config user.name "${{ github.actor }}"
+      #     git config user.email "${{ github.actor }}@users.noreply.github.com"
+      #     git add .
+      #     git commit -m "chore(release): ${{ github.event.inputs.version }}"
+      #     git push origin main
+
+      #     # Tag and release new version
+      #     git tag ${{ github.event.inputs.version }}
+      #     git push origin ${{ github.event.inputs.version }}
+      #     gh release create ${{ github.event.inputs.version }} ${{ env.MOBILE_VLC_PATH }} ${{ env.TV_VLC_PATH }} ${{ env.VLCKIT_PATH }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
