@@ -52,9 +52,9 @@ jobs:
 
           # Create our final zip files for the xcframeworks
           cd /tmp/vlc
-          zip --symlinks -r VLCKit.xcframework.zip $vlckit_xcframework_folder
-          zip --symlinks -r MobileVLCKit.xcframework.zip $mobile_vlc_xcframework_folder
-          zip --symlinks -r TVVLCKit.xcframework.zip $tv_vlc_xcframework_folder
+          zip --symlinks -r VLCKit.xcframework.zip "$vlckit_xcframework_folder"
+          zip --symlinks -r MobileVLCKit.xcframework.zip "$mobile_vlc_xcframework_folder"
+          zip --symlinks -r TVVLCKit.xcframework.zip "$tv_vlc_xcframework_folder"
           echo "MOBILE_VLC_PATH=/tmp/vlc/MobileVLCKit.xcframework.zip" >> $GITHUB_ENV
           echo "TV_VLC_PATH=/tmp/vlc/TVVLCKit.xcframework.zip" >> $GITHUB_ENV
           echo "VLCKIT_PATH=/tmp/vlc/VLCKit.xcframework.zip" >> $GITHUB_ENV
