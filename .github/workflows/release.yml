@@ -25,9 +25,9 @@ jobs:
           mobile_vlc_version_file_url=https://code.videolan.org/videolan/VLCKit/-/raw/master/Packaging/MobileVLCKit.json
           tv_vlc_version_file_url=https://code.videolan.org/videolan/VLCKit/-/raw/master/Packaging/TVVLCKit.json
           vlckit_version_file_url=https://code.videolan.org/videolan/VLCKit/-/raw/master/Packaging/VLCKit.json
-          mobile_vlc_binary_url=$(curl -s $mobile_vlc_version_file_url | jq -r '${{ github.event.inputs.version }}')
-          tv_vlc_binary_url=$(curl -s $tv_vlc_version_file_url | jq -r '${{ github.event.inputs.version }}')
-          vlckit_binary_url=$(curl -s $vlckit_version_file_url | jq -r '${{ github.event.inputs.version }}')
+          mobile_vlc_binary_url=$(curl -s $mobile_vlc_version_file_url | jq -r '["${{ github.event.inputs.version }}"]')
+          tv_vlc_binary_url=$(curl -s $tv_vlc_version_file_url | jq -r '["${{ github.event.inputs.version }}"]')
+          vlckit_binary_url=$(curl -s $vlckit_version_file_url | jq -r '["${{ github.event.inputs.version }}"]')
 
           if [[ -z $mobile_vlc_binary_url || -z $tv_vlc_binary_url || -z $vlckit_binary_url ]]; then
             echo "Binary not found for version ${{ github.event.inputs.version }}"
