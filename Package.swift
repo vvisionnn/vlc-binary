@@ -35,17 +35,17 @@ let package = Package(
     .binaryTarget(
       name: "MobileVLCKit",
       url: "https://github.com/vvisionnn/vlc-binary/releases/download/3.6.0/MobileVLCKit.xcframework.zip",
-      checksum: "1911db578a13680f55fc2d6337a0070f04dc690cd59da5da41e21317a90817ab" // MobileVLCKit
+      checksum: "847835f6e5edf25ee074f826c74a27cd45d0c789e181626f43f510d15e9bde72" // MobileVLCKit
     ),
     .binaryTarget(
       name: "TVVLCKit",
       url: "https://github.com/vvisionnn/vlc-binary/releases/download/3.6.0/TVVLCKit.xcframework.zip",
-      checksum: "7f8defcf03ff7767d656f70e3a56c2b8f75b16ebb09311bb6c78e2614c0af6e6" // TVVLCKit
+      checksum: "5a1441ec4c11f167e601ea6d4de227a22b268046816724293d3f7792dbabce59" // TVVLCKit
     ),
     .binaryTarget(
       name: "VLCKit",
       url: "https://github.com/vvisionnn/vlc-binary/releases/download/3.6.0/VLCKit.xcframework.zip",
-      checksum: "0b20b309f55be1ce0d88b885758476e09948a4677182549b75ea0c3f27f8e1cc" // VLCKit
+      checksum: "409059b32dc037d90ad52a61c9508d8817564782aaffeaf0ab56490b10df03c2" // VLCKit
     ),
   ]
 )
