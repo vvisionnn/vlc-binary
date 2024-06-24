@@ -48,23 +48,13 @@ jobs:
 
           mobile_vlc_xcframework_folder=/tmp/vlc/MobileVLCKit-binary/MobileVLCKit.xcframework
           tv_vlc_xcframework_folder=/tmp/vlc/TVVLCKit-binary/TVVLCKit.xcframework
-          vlckit_xcframework_folder="/tmp/vlc/VLCKit - binary/VLCKit.xcframework" # different folder name for VLCKit
-
-          # Create new folders for our xcframeworks
-          mkdir /tmp/vlc/MobileVLCKit.xcframework
-          mkdir /tmp/vlc/TVVLCKit.xcframework
-          mkdir /tmp/vlc/VLCKit.xcframework
-
-          # Copy binaries for supported architectures from the downloaded xcframework
-          cp -r "$vlckit_xcframework_folder"/* /tmp/vlc/VLCKit.xcframework || exit 1
-          cp -r $mobile_vlc_xcframework_folder/* /tmp/vlc/MobileVLCKit.xcframework || exit 1
-          cp -r $tv_vlc_xcframework_folder/* /tmp/vlc/TVVLCKit.xcframework || exit 1
+          vlckit_xcframework_folder="/tmp/vlc/VLCKit - binary package/VLCKit.xcframework" # different folder name for VLCKit
 
           # Create our final zip files for the xcframeworks
           cd /tmp/vlc
-          zip --symlinks -r MobileVLCKit.xcframework.zip MobileVLCKit.xcframework
-          zip --symlinks -r TVVLCKit.xcframework.zip TVVLCKit.xcframework
-          zip --symlinks -r VLCKit.xcframework.zip VLCKit.xcframework
+          zip --symlinks -r VLCKit.xcframework.zip $vlckit_xcframework_folder
+          zip --symlinks -r MobileVLCKit.xcframework.zip $mobile_vlc_xcframework_folder
+          zip --symlinks -r TVVLCKit.xcframework.zip $tv_vlc_xcframework_folder
           echo "MOBILE_VLC_PATH=/tmp/vlc/MobileVLCKit.xcframework.zip" >> $GITHUB_ENV
           echo "TV_VLC_PATH=/tmp/vlc/TVVLCKit.xcframework.zip" >> $GITHUB_ENV
           echo "VLCKIT_PATH=/tmp/vlc/VLCKit.xcframework.zip" >> $GITHUB_ENV
