@@ -75,18 +75,18 @@ jobs:
           sed -i '' "s|checksum: \"[^\"]*\" // TVVLCKit|checksum: \"$tv_vlc_checksum\" // TVVLCKit|" ./Package.swift
           sed -i '' "s|checksum: \"[^\"]*\" // VLCKit|checksum: \"$vlckit_checksum\" // VLCKit|" ./Package.swift
           cat ./Package.swift
-      # - name: Release new binaries
-      #   run: |
-      #     # Commit updated Package.swift
-      #     git config user.name "${{ github.actor }}"
-      #     git config user.email "${{ github.actor }}@users.noreply.github.com"
-      #     git add .
-      #     git commit -m "chore(release): ${{ github.event.inputs.version }}"
-      #     git push origin main
+      - name: Release new binaries
+        run: |
+          # Commit updated Package.swift
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git add .
+          git commit -m "chore(release): ${{ github.event.inputs.version }}"
+          git push origin main
 
-      #     # Tag and release new version
-      #     git tag ${{ github.event.inputs.version }}
-      #     git push origin ${{ github.event.inputs.version }}
-      #     gh release create ${{ github.event.inputs.version }} ${{ env.MOBILE_VLC_PATH }} ${{ env.TV_VLC_PATH }} ${{ env.VLCKIT_PATH }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          # Tag and release new version
+          git tag ${{ github.event.inputs.version }}
+          git push origin ${{ github.event.inputs.version }}
+          gh release create ${{ github.event.inputs.version }} ${{ env.MOBILE_VLC_PATH }} ${{ env.TV_VLC_PATH }} ${{ env.VLCKIT_PATH }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
